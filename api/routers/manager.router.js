@@ -11,10 +11,10 @@ import {
   addCategory,
   editCategory,
   deleteCategory,
+  imagePost
 } from "../controllers/manager.controller.js";
 import multer from "multer";
 const storage = multer.diskStorage({
-  destination: "./files",
   filename(req, file, cb) {
     cb(null, `${Date.now()}-${file.originalname}`);
   },
@@ -34,5 +34,5 @@ router.put("/manager/about/avatar", upload.single("file"), avatar);
 router.post("/manager/addCategory", addCategory);
 router.put("/manager/editCategory", editCategory);
 router.delete("/manager/category/delete/:id", deleteCategory);
-
+router.post("/manager/post/image", upload.single("file-image"), imagePost);
 export default router;

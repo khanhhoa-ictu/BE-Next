@@ -16,9 +16,7 @@ import {
 import multer from "multer";
 
 const storage = multer.diskStorage({
-  destination: "./files",
   filename(req, file, cb) {
-    console.log("filess",file)
     cb(null, `${Date.now()}-${file.originalname}`);
   },
 });

@@ -221,7 +221,7 @@ export const editAbout = (req, res) => {
   try {
     user = jwt.verify(token, "secret");
   } catch (error) {
-    return res.status(422).json({ msg: "token không hợp lệ" });
+    return res.status(422).json({ message: "token không hợp lệ" });
   }
   db.query(
     "SELECT * FROM user WHERE username=?",
@@ -233,7 +233,7 @@ export const editAbout = (req, res) => {
       if (result) {
         user = result[0];
         if (user.role !== "admin") {
-          return res.status(403).json("bạn không có quyền");
+          return res.status(403).json({message:"bạn không có quyền"});
         }
         db.query(
           "UPDATE about SET content = ?, facebook = ?, instal = ?, linkedin = ?, title= ?, youtube= ?",
@@ -243,7 +243,7 @@ export const editAbout = (req, res) => {
               console.log(err);
             }
             if (result) {
-              res.send("cập nhật bài viết thành công");
+              res.status(200).json({message: "cập nhật bài viết thành công"});
             }
           }
         );
@@ -258,7 +258,7 @@ export const avatar = async (req, res) => {
     urlImg = await uploadImg(req.file.path);
   }
   if (!urlImg) {
-    res.status(500).json({ msg: "upload hình ảnh thất bại" });
+    res.status(500).json({ message: "upload hình ảnh thất bại" });
     return;
   }
   const authHeader = req.headers.authorization;
@@ -272,10 +272,24 @@ export const avatar = async (req, res) => {
         console.log(err);
       }
       if (result) {
-        res.status(200).json({ msg: "thay đổi ảnh đại diện thành công" });
+        res.status(200).json({ message: "thay đổi ảnh đại diện thành công" });
       }
     }
   );
+};
+
+export const imagePost = async (req, res) => {
+  let urlImg = null;
+  if (typeof req.file !== "undefined") {
+    urlImg = await uploadImg(req.file.path);
+  }
+  if (!urlImg) {
+    res.status(500).json({ message: "upload hình ảnh thất bại" });
+    return;
+  }else{
+    console.log(urlImg)
+    res.status(200).json({ url: urlImg });
+  }
 };
 
 export const addCategory = (req, res) => {
