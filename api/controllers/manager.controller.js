@@ -21,7 +21,6 @@ const uploadImg = async (path) => {
 
 export const addPost = (req, res) => {
   const { title, content, summary, thumbnail, category_id, slug } = req.body;
-
   const authHeader = req.headers.authorization;
   const token = authHeader.split(" ")[1];
   let user;
@@ -65,7 +64,7 @@ export const getPostManager = (req, res) => {
   try {
     user = jwt.verify(token, "secret");
   } catch (error) {
-    return res.status(422).json({ msg: "token không hợp lệ" });
+    return res.status(401).json({ msg: "expired token" });
   }
   db.query(
     "SELECT * FROM user WHERE username=?",

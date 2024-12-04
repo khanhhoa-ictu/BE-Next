@@ -55,11 +55,11 @@ export const register = async (req, res) => {
   );
   const role = roleAccount.USER;
   db.query(
-    "INSERT INTO user (username, password, role) VALUES (?,?,?)",
-    [username, password, role],
+    "INSERT INTO user (username, password, role, email) VALUES (?,?,?,?)",
+    [username, password, role, username],
     (err, result) => {
       if (err) {
-        console.log(err);
+        res.status(422).json({ message: "đăng ký thất bại, vui lòng thử lại" });
       }
       if (result) {
         res.status(200).json({ message: "đăng ký thành công" });
@@ -294,7 +294,7 @@ export const verifyForgotPassword = (req, res) => {
 
   db.query("select * from user where email=?", [email], (err, result) => {
     if (err) {
-      console.log(err);
+       res.status(422).json({ message: "không tồn tại email hợp lệ" });
     }
     if (result) {
       userFind = result[0];
@@ -315,7 +315,7 @@ export const forgotPassword = async (req, res) => {
   }
   let { email, newPassword } = req.body;
   let userFind = null;
-  newPassword = bcrypt.hashSync(newPassword, 10);
+  const hashPassword = bcrypt.hashSync(newPassword, 10);
   db.query("select * from user where email=?", [email], (err, result) => {
     if (err) {
       res.status(422).json({ message: "không tồn tại email hợp lệ" });
@@ -325,10 +325,10 @@ export const forgotPassword = async (req, res) => {
 
       db.query(
         "update user set password=? where email=?",
-        [newPassword, email],
+        [hashPassword, email],
         (err, result) => {
           if (err) {
-            console.log(err);
+            res.status(422).json({ message: "không tìm thấy email phù hợp" });
           }
           if (result) {
             res.status(200).json({ message: "đổi mật khẩu thành công" });
